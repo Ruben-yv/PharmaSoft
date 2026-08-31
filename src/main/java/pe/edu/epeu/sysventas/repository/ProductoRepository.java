@@ -1,0 +1,9 @@
+package pe.edu.epeu.sysventas.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import pe.edu.epeu.sysventas.entity.Producto;
+
+public interface ProductoRepository extends JpaRepository<Producto, Long> {
+    boolean existsByNombreIgnoreCase(String nombre);
+    boolean existsByNombreIgnoreCaseAndIdNot(String nombre, long id);
+}
