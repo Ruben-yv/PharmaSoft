@@ -19,4 +19,6 @@ public class ProductoResponseDTO {
     private LocalDateTime fechaModificacion;
     private BigDecimal precio;
     private int stock;
+    private Long categoriaId;
+    private String categoriaNombre;
 }

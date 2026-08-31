@@ -32,5 +32,7 @@ public class ProductoRequestDTO {
     private BigDecimal precio;
     @NotNull(message = "El stock es obligatorio")
     private int stock;
+    @NotNull(message = "El id de la categoría es obligatorio")
+    private Long categoriaId;
 }
 

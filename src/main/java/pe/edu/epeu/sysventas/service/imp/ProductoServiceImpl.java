@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.epeu.sysventas.dto.ProductoRequestDTO;
 import pe.edu.epeu.sysventas.dto.ProductoResponseDTO;
+import pe.edu.epeu.sysventas.entity.Categoria;
 import pe.edu.epeu.sysventas.entity.Producto;
 import pe.edu.epeu.sysventas.exception.RecursosNoEncontradosException;
 import pe.edu.epeu.sysventas.exception.ReglaNegocioException;
+import pe.edu.epeu.sysventas.repository.CategoriaRepository;
 import pe.edu.epeu.sysventas.repository.ProductoRepository;
 import pe.edu.epeu.sysventas.service.service.ProductoService;
 @Service
@@ -16,9 +18,11 @@ public class ProductoServiceImpl implements ProductoService {
     private static final Logger LOG = LoggerFactory.getLogger(ProductoServiceImpl.class);
 
     private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public ProductoServiceImpl(ProductoRepository productoRepository) {
+    public ProductoServiceImpl(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
         this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     @Override
@@ -28,12 +32,17 @@ public class ProductoServiceImpl implements ProductoService {
         if (productoRepository.existsByNombreIgnoreCase(nombre)){
             throw new ReglaNegocioException("Ya existe un producto con el nombre " + nombre);
         }
+        Categoria categoria = categoriaRepository.findById(t.getCategoriaId())
+                .orElseThrow(() -> new RecursosNoEncontradosException(
+                        "Categoría no encontrada con id: " + t.getCategoriaId()
+                ));
         Producto producto = new Producto();
         producto.setNombre(nombre);
         producto.setDescripcion(t.getDescripcion());
         producto.setEstado(t.getEstado());
         producto.setPrecio(t.getPrecio());
         producto.setStock(t.getStock());
+        producto.setCategoria(categoria);
 
         Producto ProdCreada = productoRepository.save(producto);
         return convertirResponse(ProdCreada);
@@ -47,11 +56,16 @@ public class ProductoServiceImpl implements ProductoService {
                             "Producto no encontrado con id: " + aLong
                     )
             );
+        Categoria categoria = categoriaRepository.findById(t.getCategoriaId())
+                .orElseThrow(() -> new RecursosNoEncontradosException(
+                        "Categoría no encontrada con id: " + t.getCategoriaId()
+                ));
             producto.setNombre(t.getNombre());
             producto.setDescripcion(t.getDescripcion());
             producto.setEstado(t.getEstado());
             producto.setPrecio(t.getPrecio());
             producto.setStock(t.getStock());
+            producto.setCategoria(categoria);
             Producto prodActualizada = productoRepository.save(producto);
             return convertirResponse(prodActualizada);
 
@@ -96,7 +110,9 @@ public class ProductoServiceImpl implements ProductoService {
                 producto.getFechaCreacion(),
                 producto.getFechaModificacion(),
                 producto.getPrecio(),
-                producto.getStock()
+                producto.getStock(),
+                producto.getCategoria().getId(),
+                producto.getCategoria().getNombre()
         );
     }
 }
