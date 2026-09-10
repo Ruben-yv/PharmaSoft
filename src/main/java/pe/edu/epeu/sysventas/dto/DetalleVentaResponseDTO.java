@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class DetalleVentaResponseDTO {
-
+    private Long detalleId;
     private Long productoId;
     private String productoNombre;
     private Integer cantidad;
