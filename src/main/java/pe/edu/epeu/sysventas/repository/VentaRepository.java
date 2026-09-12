@@ -4,7 +4,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import pe.edu.epeu.sysventas.dto.VentaResponseDTO;
 import pe.edu.epeu.sysventas.dto.reporte.ProductoMasVendidoDTO;
 import pe.edu.epeu.sysventas.dto.reporte.VentaPorCategoriaDTO;
 import pe.edu.epeu.sysventas.entity.Venta;
@@ -16,10 +15,10 @@ import java.util.List;
 public interface VentaRepository extends JpaRepository<Venta, Long> {
     @Query(
             """ 
-            SELECT DISTINCT v FROM venta v 
+            SELECT DISTINCT v FROM Venta v
             LEFT JOIN FETCH v.cliente c
-            LEFT JOIN FETCH v.detalle d
-            LEFT JOIN FETCH v.producto p
+            LEFT JOIN FETCH v.detalles d
+            LEFT JOIN FETCH d.producto p
             WHERE (:clienteId IS NULL OR c.id = :clienteId) 
              AND (:estado IS NULL OR v.estado = :estado)
              AND (:desde IS NULL OR v.fecha >= :desde)
@@ -74,13 +73,6 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
             @Param("desde") LocalDateTime desde,
             @Param("hasta") LocalDateTime hasta);
 
-    List<VentaResponseDTO> buscar(
-            Long clienteId,
-            EstadoVenta estado,
-            LocalDateTime desde,
-            LocalDateTime hasta,
-            String ordenarPor,
-            String direccion);
 }
 
 
