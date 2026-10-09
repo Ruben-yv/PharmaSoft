@@ -11,6 +11,7 @@ import pe.edu.epeu.sysventas.service.service.CategoriaService;
 
 @RestController
 @RequestMapping("/api/categorias")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CategoriaController {
     private final CategoriaService categoriaService;
 
