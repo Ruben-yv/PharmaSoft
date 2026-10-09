@@ -10,6 +10,7 @@ import pe.edu.epeu.sysventas.entity.Categoria;
 import pe.edu.epeu.sysventas.exception.RecursosNoEncontradosException;
 import pe.edu.epeu.sysventas.exception.ReglaNegocioException;
 import pe.edu.epeu.sysventas.repository.CategoriaRepository;
+import pe.edu.epeu.sysventas.repository.ProductoRepository;
 import pe.edu.epeu.sysventas.service.service.CategoriaService;
 
 
@@ -18,9 +19,11 @@ public class CategoriaServiceImpl implements CategoriaService {
     private static final Logger LOG = LoggerFactory.getLogger(CategoriaServiceImpl.class);
 
     private final CategoriaRepository categoriaRepository;
+    private final ProductoRepository productoRepository;
 
-    public CategoriaServiceImpl(CategoriaRepository categoriaRepository) {
+    public CategoriaServiceImpl(CategoriaRepository categoriaRepository, ProductoRepository productoRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.productoRepository = productoRepository;
     }
 
     @Override
@@ -47,6 +50,9 @@ public class CategoriaServiceImpl implements CategoriaService {
                         "Categoria no encontrada con id: " + aLong
                 )
         );
+        if (!Boolean.TRUE.equals(t.getEstado()) && productoRepository.existsByCategoriaIdAndEstadoTrue(aLong)) {
+            throw new ReglaNegocioException("No se puede desactivar una categoría que tiene productos activos");
+        }
         categoria.setNombre(t.getNombre());
         categoria.setDescripcion(t.getDescripcion());
         categoria.setEstado(t.getEstado());
@@ -74,6 +80,9 @@ public class CategoriaServiceImpl implements CategoriaService {
                         "Categoria no encontrada con id: " + aLong
                 )
         );
+        if (productoRepository.existsByCategoriaId(aLong)) {
+            throw new ReglaNegocioException("No se puede eliminar una categoría que tiene productos asociados");
+        }
         categoriaRepository.delete(categoria);
     }
 
