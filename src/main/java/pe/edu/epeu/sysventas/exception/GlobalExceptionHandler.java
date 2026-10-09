@@ -1,6 +1,7 @@
 package pe.edu.epeu.sysventas.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -97,5 +98,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleParameterValidation(
+            ConstraintViolationException ex,
+            HttpServletRequest request) {
+        Map<String, String> validationErrors = new LinkedHashMap<>();
+        ex.getConstraintViolations().forEach(violation -> {
+            String path = violation.getPropertyPath().toString();
+            String field = path.substring(path.lastIndexOf('.') + 1);
+            validationErrors.put(field, violation.getMessage());
+        });
+        ErrorResponseDTO error = new ErrorResponseDTO(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                "Existen errores de validación",
+                request.getRequestURI(),
+                validationErrors
+        );
+        return ResponseEntity.badRequest().body(error);
     }
 }

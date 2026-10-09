@@ -10,7 +10,7 @@ import pe.edu.epeu.sysventas.entity.Categoria;
 import pe.edu.epeu.sysventas.service.service.CategoriaService;
 
 @RestController
-@RequestMapping("/api/categorias")
+@RequestMapping({"/api/categorias", "/api/v1/categorias"})
 @CrossOrigin(origins = "http://localhost:4200")
 public class CategoriaController {
     private final CategoriaService categoriaService;
