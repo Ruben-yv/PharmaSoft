@@ -74,10 +74,17 @@ public class VentaServiceImpl implements VentaService {
                 throw new ReglaNegocioException("El producto " + producto.getNombre() + " se encuentra inactivo");
             }
 
-            if (producto.getStock() < item.getCantidad()) {
+            int stockDisponible = producto.getStock();
+            if (stockDisponible < item.getCantidad()) {
+                throw stockInsuficiente(producto.getNombre(), stockDisponible, item.getCantidad());
+            }
 
-                throw new ReglaNegocioException("Stock insuficiente para " + producto.getNombre() + ". Disponible: " + producto.getStock()
-                        + ", solicitado: " + item.getCantidad());
+            if (productoRepository.descontarStockSiDisponible(producto.getId(), item.getCantidad()) == 0) {
+                if (!Boolean.TRUE.equals(productoRepository.consultarEstadoActual(producto.getId()))) {
+                    throw new ReglaNegocioException("El producto " + producto.getNombre() + " se encuentra inactivo");
+                }
+                int stockActual = productoRepository.consultarStockActual(producto.getId());
+                throw stockInsuficiente(producto.getNombre(), stockActual, item.getCantidad());
             }
 
             BigDecimal subtotal = producto.getPrecio().multiply(BigDecimal.valueOf(item.getCantidad()));
@@ -93,7 +100,6 @@ public class VentaServiceImpl implements VentaService {
 
             total = total.add(subtotal);
 
-            producto.setStock(producto.getStock() - item.getCantidad());
         }
 
         venta.setTotal(total);
@@ -101,6 +107,11 @@ public class VentaServiceImpl implements VentaService {
         Venta guardada = ventaRepository.save(venta);
 
         return convertirResponse(guardada);
+    }
+
+    private ReglaNegocioException stockInsuficiente(String nombre, int disponible, int solicitado) {
+        return new ReglaNegocioException("Stock insuficiente para " + nombre + ". Disponible: " + disponible
+                + ", solicitado: " + solicitado);
     }
 
     @Override
