@@ -13,12 +13,11 @@ import java.time.LocalDateTime;
 public class ProductoResponseDTO {
     private Long id;
     private String nombre;
-    private String descripcion;
-    private Boolean estado;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaModificacion;
     private BigDecimal precio;
-    private int stock;
+    private Integer stock;
+    private Boolean estado;
     private Long categoriaId;
     private String categoriaNombre;
+    private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaModificacion;
 }
