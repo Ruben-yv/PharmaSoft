@@ -1,18 +1,23 @@
 package pe.edu.epeu.sysventas.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.epeu.sysventas.dto.VentaRequestDTO;
 import pe.edu.epeu.sysventas.dto.VentaResponseDTO;
+import pe.edu.epeu.sysventas.dto.PaginaResponseDTO;
 import pe.edu.epeu.sysventas.enums.EstadoVenta;
 import pe.edu.epeu.sysventas.service.service.VentaService;
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/api/v1/ventas")
 public class VentaController {
 
@@ -61,7 +66,7 @@ public class VentaController {
      * filtran. Sin coincidencias responde 200 con arreglo vacío.
      */
     @GetMapping("/buscar")
-    public ResponseEntity<List<VentaResponseDTO>> buscar(
+    public ResponseEntity<PaginaResponseDTO<VentaResponseDTO>> buscar(
 
             @RequestParam(required = false)
             Long clienteId,
@@ -81,17 +86,28 @@ public class VentaController {
             String ordenarPor,
 
             @RequestParam(required = false, defaultValue = "desc")
-            String direccion) {
+            String direccion,
 
-        return ResponseEntity.ok(
-                ventaService.buscarVentas(
+            @RequestParam(required = false, defaultValue = "0")
+            @Min(0)
+            Integer pagina,
+
+            @RequestParam(required = false, defaultValue = "10")
+            @Min(1) @Max(100)
+            Integer tamanio) {
+
+        List<VentaResponseDTO> ventas = ventaService.buscarVentas(
                         clienteId,
                         estado,
                         desde,
                         hasta,
                         ordenarPor,
-                        direccion
-                )
-        );
+                        direccion);
+        int desdeIndice = (int) Math.min((long) pagina * tamanio, ventas.size());
+        int hastaIndice = Math.min(desdeIndice + tamanio, ventas.size());
+        int totalPaginas = (int) Math.ceil((double) ventas.size() / tamanio);
+        return ResponseEntity.ok(new PaginaResponseDTO<>(
+                ventas.subList(desdeIndice, hastaIndice), pagina, tamanio, ventas.size(), totalPaginas,
+                totalPaginas == 0 || pagina >= totalPaginas - 1));
     }
 }
