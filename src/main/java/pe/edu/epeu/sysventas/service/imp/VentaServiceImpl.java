@@ -223,7 +223,6 @@ public class VentaServiceImpl implements VentaService {
                         .stream()
                         .map(detalle ->
                                 new DetalleVentaResponseDTO(
-                                        detalle.getId(),
                                         detalle.getProducto().getId(),
                                         detalle.getProducto().getNombre(),
                                         detalle.getCantidad(),
