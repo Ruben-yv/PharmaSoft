@@ -21,4 +21,23 @@ springdoc:
 
   api-docs:
     enabled: false
+logging:
+  level:
+    root: WARN
+    pe.edu.upeu.PharmaBackend: INFO
+    pe.edu.upeu.PharmaBackend.service.impl: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN
+    org.springframework.web: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"
 
+# En produccion el origen del frontend llega por variable de entorno,
+# tambien de forma explicita y sin comodin.
+app:
+  cors:
+    allowed-origins: ${FRONTEND_ORIGINS:https://pharmasoft.upeu.edu.pe}
+  # En produccion la clave llega por variable de entorno, nunca en el repo.
+  jwt:
+    secret: ${JWT_SECRET}
+    expiracion-minutos: ${JWT_EXPIRACION_MINUTOS:60}

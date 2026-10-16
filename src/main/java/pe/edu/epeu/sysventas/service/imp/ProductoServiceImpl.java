@@ -152,14 +152,13 @@ public class ProductoServiceImpl implements ProductoService {
         return new ProductoResponseDTO(
                 producto.getId(),
                 producto.getNombre(),
-                producto.getDescripcion(),
-                producto.getEstado(),
-                producto.getFechaCreacion(),
-                producto.getFechaModificacion(),
                 producto.getPrecio(),
                 producto.getStock(),
+                producto.getEstado(),
                 producto.getCategoria().getId(),
-                producto.getCategoria().getNombre()
+                producto.getCategoria().getNombre(),
+                producto.getFechaCreacion(),
+                producto.getFechaModificacion()
         );
     }
 }
