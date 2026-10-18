@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.epeu.sysventas.dto.auth.CambioPasswordRequestDTO;
 import pe.edu.epeu.sysventas.dto.auth.LoginRequestDTO;
 import pe.edu.epeu.sysventas.dto.auth.LoginResponseDTO;
 import pe.edu.epeu.sysventas.dto.auth.UsuarioResponseDTO;
@@ -28,5 +29,13 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<UsuarioResponseDTO> me(Authentication authentication) {
         return ResponseEntity.ok(authService.usuarioActual(authentication.getName()));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<Void> cambiarPassword(
+            Authentication authentication,
+            @Valid @RequestBody CambioPasswordRequestDTO request) {
+        authService.cambiarPassword(authentication.getName(), request);
+        return ResponseEntity.noContent().build();
     }
 }
