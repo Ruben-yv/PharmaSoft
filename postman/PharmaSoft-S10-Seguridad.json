@@ -1,0 +1,2047 @@
+{
+  "info": {
+    "_postman_id": "65fbb40c-2a9b-459b-b9d2-7d9018ac4ef8",
+    "name": "PharmaSoft - S10 Seguridad",
+    "description": "Pruebas JWT, permisos, contraseñas y administración de usuarios para la Actividad Autónoma S10. Ejecuta A-01 y después Preparar IDs. Tokens empiezan vacíos y no deben exportarse.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1"
+    },
+    {
+      "key": "usernameAdmin",
+      "value": "admin"
+    },
+    {
+      "key": "usernameVendedor",
+      "value": "vendedor"
+    },
+    {
+      "key": "usernameVendedorMayusculas",
+      "value": "VENDEDOR"
+    },
+    {
+      "key": "usernameAlmacen",
+      "value": "almacen"
+    },
+    {
+      "key": "usernameSupervisor",
+      "value": "supervisor"
+    },
+    {
+      "key": "usernameInactivo",
+      "value": "inactivo"
+    },
+    {
+      "key": "passwordAdmin",
+      "value": "Admin2026*"
+    },
+    {
+      "key": "passwordVendedor",
+      "value": "Vendedor2026*"
+    },
+    {
+      "key": "passwordNuevaVendedor",
+      "value": "NuevaClave2026"
+    },
+    {
+      "key": "passwordAlmacen",
+      "value": "Almacen2026*"
+    },
+    {
+      "key": "passwordSupervisor",
+      "value": "Supervisor2026*"
+    },
+    {
+      "key": "passwordInactivo",
+      "value": "Inactivo2026*"
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "tokenVendedor",
+      "value": ""
+    },
+    {
+      "key": "tokenAlmacen",
+      "value": ""
+    },
+    {
+      "key": "tokenSupervisor",
+      "value": ""
+    },
+    {
+      "key": "tokenInactivo",
+      "value": ""
+    },
+    {
+      "key": "tokenMayusculas",
+      "value": ""
+    },
+    {
+      "key": "tokenAlterado",
+      "value": ""
+    },
+    {
+      "key": "tokenObjetivo",
+      "value": ""
+    },
+    {
+      "key": "usernameObjetivo",
+      "value": ""
+    },
+    {
+      "key": "passwordObjetivo",
+      "value": ""
+    },
+    {
+      "key": "empleadoConUsuarioId",
+      "value": ""
+    },
+    {
+      "key": "empleadoMariaId",
+      "value": ""
+    },
+    {
+      "key": "usuarioRolesObjetivoId",
+      "value": ""
+    },
+    {
+      "key": "usuarioEstadoObjetivoId",
+      "value": ""
+    },
+    {
+      "key": "usuarioAdminId",
+      "value": ""
+    },
+    {
+      "key": "rolVendedorId",
+      "value": ""
+    },
+    {
+      "key": "rolAlmaceneroId",
+      "value": ""
+    },
+    {
+      "key": "mensaje401",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación A-01 a A-05",
+      "item": [
+        {
+          "name": "A-01 Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Login de cuenta de prueba. El script guarda el token localmente; no exportes ni compartas tokens.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameAdmin}}\",\n  \"password\": \"{{passwordAdmin}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "pm.test('Token, roles y permisos presentes',()=>{pm.expect(b.token).to.be.a('string');pm.expect(b.roles).to.be.an('array');pm.expect(b.permisos).to.be.an('array');});",
+                  "pm.collectionVariables.set('tokenAdmin',b.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-01 Login vendedor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Login de cuenta de prueba. El script guarda el token localmente; no exportes ni compartas tokens.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameVendedor}}\",\n  \"password\": \"{{passwordVendedor}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "pm.test('Token, roles y permisos presentes',()=>{pm.expect(b.token).to.be.a('string');pm.expect(b.roles).to.be.an('array');pm.expect(b.permisos).to.be.an('array');});",
+                  "pm.collectionVariables.set('tokenVendedor',b.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-01 Login almacenero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Login de cuenta de prueba. El script guarda el token localmente; no exportes ni compartas tokens.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameAlmacen}}\",\n  \"password\": \"{{passwordAlmacen}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "pm.test('Token, roles y permisos presentes',()=>{pm.expect(b.token).to.be.a('string');pm.expect(b.roles).to.be.an('array');pm.expect(b.permisos).to.be.an('array');});",
+                  "pm.collectionVariables.set('tokenAlmacen',b.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-01 Login supervisor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Login de cuenta de prueba. El script guarda el token localmente; no exportes ni compartas tokens.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameSupervisor}}\",\n  \"password\": \"{{passwordSupervisor}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "pm.test('Token, roles y permisos presentes',()=>{pm.expect(b.token).to.be.a('string');pm.expect(b.roles).to.be.an('array');pm.expect(b.permisos).to.be.an('array');});",
+                  "pm.collectionVariables.set('tokenSupervisor',b.token);",
+                  "pm.test('Une VENDEDOR y ALMACENERO',()=>pm.expect(b.roles).to.include.members(['VENDEDOR','ALMACENERO']));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-02 Usuario inexistente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"usuario-no-existe-s10\",\n  \"password\": \"Incorrecta2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.collectionVariables.set('mensaje401',pm.response.json().message);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-02 Contraseña incorrecta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameVendedor}}\",\n  \"password\": \"Incorrecta2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mismo mensaje',()=>pm.expect(pm.response.json().message).to.eql(pm.collectionVariables.get('mensaje401')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-03 Login inactivo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameInactivo}}\",\n  \"password\": \"{{passwordInactivo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mismo mensaje genérico',()=>pm.expect(pm.response.json().message).to.eql(pm.collectionVariables.get('mensaje401')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-04 Login username mayúsculas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Login de cuenta de prueba. El script guarda el token localmente; no exportes ni compartas tokens.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameVendedorMayusculas}}\",\n  \"password\": \"{{passwordVendedor}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "pm.test('Token, roles y permisos presentes',()=>{pm.expect(b.token).to.be.a('string');pm.expect(b.roles).to.be.an('array');pm.expect(b.permisos).to.be.an('array');});",
+                  "pm.collectionVariables.set('tokenMayusculas',b.token);",
+                  "pm.test('Username canónico',()=>pm.expect(b.username).to.eql(pm.collectionVariables.get('usernameVendedor')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A-05 GET perfil sin datos sensibles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "pm.test('No se expone password',()=>pm.expect(JSON.stringify(pm.response.json()).toLowerCase()).not.to.include('password'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Preparar IDs",
+      "item": [
+        {
+          "name": "Preparar IDs de usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios",
+            "description": "Ejecutar después de iniciar sesión como admin; configura automáticamente IDs de prueba."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const a=pm.response.json(), admin=a.find(x=>x.username==='admin'), vend=a.find(x=>x.username==='vendedor'); if(!admin||!vend) throw new Error('No se encontraron admin/vendedor'); pm.collectionVariables.set('usuarioAdminId',admin.id); pm.collectionVariables.set('usuarioRolesObjetivoId',vend.id); pm.collectionVariables.set('usuarioEstadoObjetivoId',vend.id); pm.collectionVariables.set('empleadoConUsuarioId',vend.empleadoId); pm.collectionVariables.set('usernameObjetivo',vend.username); pm.collectionVariables.set('passwordObjetivo',pm.collectionVariables.get('passwordVendedor'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Preparar IDs de roles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/roles",
+            "description": "Completa los IDs de roles que usan los casos B-05 a B-07."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const a=pm.response.json(); for(const n of ['VENDEDOR','ALMACENERO']) { const r=a.find(x=>x.nombre===n); if(!r) throw new Error('Falta el rol '+n); pm.collectionVariables.set(n==='VENDEDOR'?'rolVendedorId':'rolAlmaceneroId',r.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Preparar ID de empleado María",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/empleados",
+            "description": "La migración de prueba identifica a María con DNI 45667788."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const e=pm.response.json().find(x=>x.dni==='45667788'); if(!e) throw new Error('No se encontró a María'); pm.collectionVariables.set('empleadoMariaId',e.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Ejecutar con tokenAdmin después de A-01 para completar las variables de usuario, empleado y roles."
+    },
+    {
+      "name": "Tokens T-01 a T-06",
+      "item": [
+        {
+          "name": "T-01 Token sin Bearer",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{tokenVendedor}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"Debe iniciar sesión\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "T-02 Payload JWT alterado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAlterado}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "description": "El script cambia el subject del payload y conserva la firma original."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const t=pm.collectionVariables.get('tokenVendedor');",
+                  "if(!t) throw new Error('Ejecuta primero A-01 Login vendedor');",
+                  "const p=t.split('.'); const c=JSON.parse(CryptoJS.enc.Base64.parse(p[1]).toString(CryptoJS.enc.Utf8)); c.sub=c.sub+'x';",
+                  "const b=CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(JSON.stringify(c))).replace(/=+$/,'').replace(/\\+/g,'-').replace(/\\//g,'_');",
+                  "pm.collectionVariables.set('tokenAlterado',p[0]+'.'+b+'.'+p[2]);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"El token no es válido\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "T-03 Token de secreto anterior",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "description": "Cambiar temporalmente el secreto y reiniciar API; enviar el token previo. Restaurar secreto y reiniciar al terminar."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"El token no es válido\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "T-04 Token expirado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "description": "Configurar expiración de 1 minuto, volver a iniciar sesión, esperar y enviar."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"El token ha expirado\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "T-05 Decodificar claims JWT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "description": "El test decodifica el payload localmente; no incluir el token completo en evidencia."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const t=pm.collectionVariables.get('tokenVendedor'); const c=JSON.parse(CryptoJS.enc.Base64.parse(t.split('.')[1]).toString(CryptoJS.enc.Utf8));",
+                  "pm.test('sub, authorities, iat y exp presentes; sin password',()=>{pm.expect(c.sub).to.be.a('string');pm.expect(c.authorities).to.be.an('array');pm.expect(c.iat).to.exist;pm.expect(c.exp).to.exist;pm.expect(JSON.stringify(c).toLowerCase()).not.to.include('password');});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "T-06 Sin encabezado Authorization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/auth/me"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"Debe iniciar sesión\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "T-03 y T-04 requieren cambiar y luego restaurar configuración de desarrollo."
+    },
+    {
+      "name": "Permisos P-01 a P-05",
+      "item": [
+        {
+          "name": "P-01 Vendedor POST categorías",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/categorias",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-01 Vendedor PUT categoría",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/categorias/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-01 Vendedor DELETE categoría",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              }
+            ],
+            "url": "{{baseUrl}}/categorias/1"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-02 Almacenero GET clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAlmacen}}"
+              }
+            ],
+            "url": "{{baseUrl}}/clientes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-02 Almacenero POST ventas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAlmacen}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/ventas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clienteId\": 1,\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"cantidad\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-03 Vendedor GET reporte productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              }
+            ],
+            "url": "{{baseUrl}}/reportes/productos-mas-vendidos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-03 Almacenero GET reporte productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAlmacen}}"
+              }
+            ],
+            "url": "{{baseUrl}}/reportes/productos-mas-vendidos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403',()=>pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-04 Admin GET categorias",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/categorias"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Respuesta 2xx',()=>pm.expect(pm.response.code).to.be.within(200,299));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-04 Admin GET productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/productos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Respuesta 2xx',()=>pm.expect(pm.response.code).to.be.within(200,299));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-04 Admin GET clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/clientes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Respuesta 2xx',()=>pm.expect(pm.response.code).to.be.within(200,299));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-04 Admin GET ventas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/ventas"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Respuesta 2xx',()=>pm.expect(pm.response.code).to.be.within(200,299));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-04 Admin GET reportes/ventas-por-categoria",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/reportes/ventas-por-categoria"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Respuesta 2xx',()=>pm.expect(pm.response.code).to.be.within(200,299));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "P-05 Anónimo GET productos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/productos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Usuarios U-01 y U-02",
+      "item": [
+        {
+          "name": "U-01 Password sin número",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"s10-invalido\",\n  \"password\": \"abcdefgh\",\n  \"empleadoId\": 1,\n  \"rolIds\": [\n    1\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "U-01 Conjunto roles vacío",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"s10-sin-rol\",\n  \"password\": \"Abcdefgh1\",\n  \"empleadoId\": 1,\n  \"rolIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "U-02 Empleado con cuenta existente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"duplicado-s10\",\n  \"password\": \"Abcdefgh1\",\n  \"empleadoId\": \"{{empleadoConUsuarioId}}\",\n  \"rolIds\": [\n    \"{{rolVendedorId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "U-02 Crear cuenta para empleado sin usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios",
+            "description": "Configura los IDs de empleado y rol. Después verifica SQL usuario_roles.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"maria.prueba\",\n  \"password\": \"Maria2026\",\n  \"empleadoId\": \"{{empleadoMariaId}}\",\n  \"rolIds\": [\n    \"{{rolVendedorId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201',()=>pm.response.to.have.status(201));",
+                  "pm.test('Respuesta no incluye password',()=>pm.expect(JSON.stringify(pm.response.json()).toLowerCase()).not.to.include('password'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CORS C-01 y C-02",
+      "item": [
+        {
+          "name": "C-01 OPTIONS desde Angular",
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:4200"
+              },
+              {
+                "key": "Access-Control-Request-Method",
+                "value": "GET"
+              },
+              {
+                "key": "Access-Control-Request-Headers",
+                "value": "authorization"
+              }
+            ],
+            "url": "{{baseUrl}}/clientes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Preflight 200',()=>pm.response.to.have.status(200));pm.test('Origen permitido',()=>pm.expect(pm.response.headers.get('Access-Control-Allow-Origin')).to.eql('http://localhost:4200'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C-01 GET desde Angular",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:4200"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": "{{baseUrl}}/clientes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET permitido',()=>pm.expect(pm.response.code).to.be.within(200,299));pm.test('CORS habilitado',()=>pm.expect(pm.response.headers.get('Access-Control-Allow-Origin')).to.eql('http://localhost:4200'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C-02 Origen no permitido",
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:9999"
+              },
+              {
+                "key": "Access-Control-Request-Method",
+                "value": "GET"
+              }
+            ],
+            "url": "{{baseUrl}}/clientes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('No autoriza origen ajeno',()=>pm.expect(pm.response.headers.get('Access-Control-Allow-Origin')).not.eql('http://localhost:9999'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Gestión B-01 a B-08",
+      "item": [
+        {
+          "name": "B-01 Cambiar contraseña propia",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/password",
+            "description": "Cambia datos persistentes. Actualiza la variable de contraseña y restaura la cuenta al finalizar.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordActual\": \"{{passwordVendedor}}\",\n  \"passwordNueva\": \"{{passwordNuevaVendedor}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204',()=>pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set('passwordVendedor',pm.collectionVariables.get('passwordNuevaVendedor'));pm.collectionVariables.set('passwordObjetivo',pm.collectionVariables.get('passwordNuevaVendedor'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-01 Verificar login con contraseña nueva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Ejecutar después de Cambiar contraseña propia; requiere que el test anterior haya actualizado la variable local.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameVendedor}}\",\n  \"password\": \"{{passwordVendedor}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('tokenVendedor',pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-02 Contraseña actual incorrecta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordActual\": \"Incorrecta2026\",\n  \"passwordNueva\": \"NuevaClave2026\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"La contraseña actual no es correcta\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-03 Nueva igual a actual",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordActual\": \"{{passwordVendedor}}\",\n  \"passwordNueva\": \"{{passwordVendedor}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"La nueva contraseña debe ser distinta de la actual\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-04 Nueva contraseña inválida",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordActual\": \"{{passwordVendedor}}\",\n  \"passwordNueva\": \"abcdefgh\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-05 Reemplazar roles",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioRolesObjetivoId}}/roles",
+            "description": "Efecto persistente: reemplaza roles del vendedor. El folder Preparar IDs configura el usuario y los roles.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rolIds\": [\n    \"{{rolAlmaceneroId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "pm.test('Rol actualizado',()=>pm.expect(pm.response.json().roles).to.include('ALMACENERO'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-05 Comprobar authority con token ya emitido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/productos",
+            "description": "Después de asignar ALMACENERO al usuario objetivo, usar el token emitido antes. HTTP 400 por cuerpo vacío demuestra que pasó autorización; 403 indicaría permisos antiguos.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-05 Restaurar roles vendedor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioRolesObjetivoId}}/roles",
+            "description": "Restauración de roles de la cuenta semilla vendedor después de capturar la prueba de permisos.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rolIds\": [\n    \"{{rolVendedorId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-06 Roles vacíos",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioRolesObjetivoId}}/roles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rolIds\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-06 Usuario inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/999999999/roles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rolIds\": [\n    1\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-06 Rol inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioRolesObjetivoId}}/roles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rolIds\": [\n    999999999\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-07 Admin no puede quitarse ADMIN",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioAdminId}}/roles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rolIds\": [\n    \"{{rolVendedorId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"no puede quitarse a sí mismo el rol ADMIN\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-08 Login objetivo antes de desactivar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Ejecuta antes del PATCH para guardar el token que se comprobará después.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameObjetivo}}\",\n  \"password\": \"{{passwordObjetivo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('tokenObjetivo',pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-08 Desactivar usuario de prueba",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioEstadoObjetivoId}}/estado",
+            "description": "Efecto persistente. Desactiva solo cuenta de prueba.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-08 Token anterior de usuario desactivado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenObjetivo}}"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"El usuario está deshabilitado\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-08 Login de usuario desactivado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{usernameObjetivo}}\",\n  \"password\": \"{{passwordObjetivo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 401',()=>pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-08 Admin no puede desactivarse",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioAdminId}}/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+                  "pm.test('Mensaje esperado',()=>pm.expect(pm.response.json().message).to.include(\"no puede desactivarse a sí mismo\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-08 Usuario inexistente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/999999999/estado",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-08 Restaurar usuario de prueba",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/usuarios/{{usuarioEstadoObjetivoId}}/estado",
+            "description": "Ejecutar tras capturar las pruebas de usuario desactivado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "B-01 Restaurar contraseña vendedor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenVendedor}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/password",
+            "description": "Restaura la contraseña semilla. Ejecutar si se completó B-01 Cambiar contraseña propia.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordActual\": \"{{passwordVendedor}}\",\n  \"passwordNueva\": \"Vendedor2026*\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204',()=>pm.response.to.have.status(204));",
+                  "pm.collectionVariables.set('passwordVendedor','Vendedor2026*');pm.collectionVariables.set('passwordObjetivo','Vendedor2026*');"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Los casos exitosos cambian datos persistentes. Usa cuentas de prueba y restaura contraseñas, roles y estado al terminar."
+    }
+  ]
+}

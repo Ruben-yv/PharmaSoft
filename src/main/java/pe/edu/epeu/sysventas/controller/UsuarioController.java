@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.security.core.Authentication;
+import pe.edu.epeu.sysventas.dto.auth.AsignarRolesRequestDTO;
+import pe.edu.epeu.sysventas.dto.auth.CambiarEstadoUsuarioRequestDTO;
 import pe.edu.epeu.sysventas.dto.auth.EmpleadoResponseDTO;
 import pe.edu.epeu.sysventas.dto.auth.RolResponseDTO;
 import pe.edu.epeu.sysventas.dto.auth.UsuarioRequestDTO;
@@ -37,6 +43,24 @@ public class UsuarioController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(usuarioService.crear(request));
+    }
+
+    @PutMapping("/usuarios/{id}/roles")
+    public ResponseEntity<UsuarioResponseDTO> asignarRoles(
+            @PathVariable Long id,
+            @Valid @RequestBody AsignarRolesRequestDTO request,
+            Authentication authentication) {
+        return ResponseEntity.ok(usuarioService.asignarRoles(
+                id, request, authentication.getName()));
+    }
+
+    @PatchMapping("/usuarios/{id}/estado")
+    public ResponseEntity<UsuarioResponseDTO> cambiarEstado(
+            @PathVariable Long id,
+            @Valid @RequestBody CambiarEstadoUsuarioRequestDTO request,
+            Authentication authentication) {
+        return ResponseEntity.ok(usuarioService.cambiarEstado(
+                id, request, authentication.getName()));
     }
 
 
