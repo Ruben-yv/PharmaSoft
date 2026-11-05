@@ -3,6 +3,8 @@ package pe.edu.epeu.sysventas.service.imp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,6 +35,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "productos", allEntries = true)
     public ProductoResponseDTO create(ProductoRequestDTO t) {
         String nombre = t.getNombre().trim();
         if (productoRepository.existsByNombreIgnoreCase(nombre)){
@@ -57,6 +60,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "productos", allEntries = true)
     public ProductoResponseDTO update(Long aLong, ProductoRequestDTO t) {
             Producto producto = productoRepository.findById(aLong).orElseThrow(() ->
                     new RecursosNoEncontradosException(
@@ -86,6 +90,7 @@ public class ProductoServiceImpl implements ProductoService {
     }
     @Override
     @Transactional
+    @Cacheable(cacheNames = "productos", key = "'id-' + #p0")
     public ProductoResponseDTO read (Long aLong){
         Producto producto = productoRepository.findById(aLong)
                 .orElseThrow(()->
@@ -98,6 +103,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "productos", allEntries = true)
     public void delete (Long aLong){
         Producto producto = productoRepository.findById(aLong).orElseThrow(()->
                 new RecursosNoEncontradosException(
@@ -113,6 +119,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "productos", key = "'todas'")
     public Iterable<ProductoResponseDTO> readAll () {
         return productoRepository.findAll()
                 .stream()
@@ -122,6 +129,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "productos", key = "#p0 + '-' + #p1 + '-' + #p2 + '-' + #p3")
     public PaginaResponseDTO<ProductoResponseDTO> listar(int pagina, int tamanio, String ordenarPor, String direccion) {
         if (!CAMPOS_ORDENABLES.contains(ordenarPor)) {
             throw new ReglaNegocioException("Campo de orden no válido. Use id, nombre, precio o stock");

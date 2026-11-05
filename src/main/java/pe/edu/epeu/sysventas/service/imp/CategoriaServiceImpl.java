@@ -2,6 +2,8 @@ package pe.edu.epeu.sysventas.service.imp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.epeu.sysventas.dto.CategoriaRequestDTO;
@@ -12,6 +14,8 @@ import pe.edu.epeu.sysventas.exception.ReglaNegocioException;
 import pe.edu.epeu.sysventas.repository.CategoriaRepository;
 import pe.edu.epeu.sysventas.repository.ProductoRepository;
 import pe.edu.epeu.sysventas.service.service.CategoriaService;
+
+import java.util.List;
 
 
 @Service
@@ -28,6 +32,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "categorias", allEntries = true)
     public CategoriaResponseDTO create(CategoriaRequestDTO t) {
         String nombre = t.getNombre().trim();
         if (categoriaRepository.existsByNombreIgnoreCase(nombre)){
@@ -44,6 +49,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = {"categorias", "productos"}, allEntries = true)
     public CategoriaResponseDTO update(Long aLong, CategoriaRequestDTO t) {
         Categoria categoria = categoriaRepository.findById(aLong).orElseThrow(()->
                 new RecursosNoEncontradosException(
@@ -62,6 +68,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "categorias", key = "'id-' + #p0")
     public CategoriaResponseDTO read(Long aLong) {
         Categoria categoria = categoriaRepository.findById(aLong)
                 .orElseThrow(()->
@@ -74,6 +81,7 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "categorias", allEntries = true)
     public void delete(Long aLong) {
         Categoria categoria = categoriaRepository.findById(aLong).orElseThrow(()->
                 new RecursosNoEncontradosException(
@@ -88,11 +96,17 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "categorias", key = "'todas'")
     public Iterable<CategoriaResponseDTO> readAll() {
-        return categoriaRepository.findAll()
+        long inicio = System.currentTimeMillis();
+        LOG.info("Inicio listar categorias");
+        List<CategoriaResponseDTO> resultado = categoriaRepository.findAll()
                 .stream()
                 .map(this::convertirResponse)
                 .toList();
+        LOG.info("Fin listar categorias | filas={} | duracionMs={}", resultado.size(),
+                System.currentTimeMillis() - inicio);
+        return resultado;
     }
     private CategoriaResponseDTO convertirResponse(Categoria categoria){
         return new CategoriaResponseDTO(
