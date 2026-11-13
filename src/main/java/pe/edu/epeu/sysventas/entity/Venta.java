@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pe.edu.epeu.sysventas.enums.EstadoVenta;
 
 import java.math.BigDecimal;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "ventas")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,6 +32,10 @@ public class Venta {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal total;
+
+    @CreatedBy
+    @Column(name = "creado_por", length = 50, updatable = false)
+    private String creadoPor;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

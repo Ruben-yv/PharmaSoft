@@ -3,6 +3,7 @@ package pe.edu.epeu.sysventas.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -96,18 +97,14 @@ public class VentaController {
             @Min(1) @Max(100)
             Integer tamanio) {
 
-        List<VentaResponseDTO> ventas = ventaService.buscarVentas(
+        return ResponseEntity.ok(ventaService.buscarVentas(
                         clienteId,
                         estado,
                         desde,
                         hasta,
                         ordenarPor,
-                        direccion);
-        int desdeIndice = (int) Math.min((long) pagina * tamanio, ventas.size());
-        int hastaIndice = Math.min(desdeIndice + tamanio, ventas.size());
-        int totalPaginas = (int) Math.ceil((double) ventas.size() / tamanio);
-        return ResponseEntity.ok(new PaginaResponseDTO<>(
-                ventas.subList(desdeIndice, hastaIndice), pagina, tamanio, ventas.size(), totalPaginas,
-                totalPaginas == 0 || pagina >= totalPaginas - 1));
+                        direccion,
+                        pagina,
+                        tamanio));
     }
 }

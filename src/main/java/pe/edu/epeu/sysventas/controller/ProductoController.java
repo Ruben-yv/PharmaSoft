@@ -1,7 +1,6 @@
 package pe.edu.epeu.sysventas.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,7 @@ public class ProductoController {
     @GetMapping
     public ResponseEntity<PaginaResponseDTO<ProductoResponseDTO>> findAll(
             @RequestParam(defaultValue = "0") @Min(value = 0, message = "La página debe ser mayor o igual a cero") int pagina,
-            @RequestParam(defaultValue = "10") @Min(value = 1, message = "El tamaño debe ser mayor que cero") @Max(value = 100, message = "El tamaño máximo permitido es 100") int tamanio,
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "El tamaño debe ser mayor que cero") int tamanio,
             @RequestParam(defaultValue = "nombre") String ordenarPor,
             @RequestParam(defaultValue = "asc") String direccion) {
         return ResponseEntity.ok(productoService.listar(pagina, tamanio, ordenarPor, direccion));

@@ -23,5 +23,7 @@ public class VentaResponseDTO {
     private String estado;
     private BigDecimal total;
 
+    private String creadoPor;
+
     private List<DetalleVentaResponseDTO> detalles;
 }
