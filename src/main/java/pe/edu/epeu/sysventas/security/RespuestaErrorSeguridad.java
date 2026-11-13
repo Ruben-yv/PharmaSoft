@@ -2,6 +2,7 @@ package pe.edu.epeu.sysventas.security;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +26,7 @@ final class RespuestaErrorSeguridad {
                 + "\"error\":\"" + escapar(error) + "\","
                 + "\"message\":\"" + escapar(mensaje) + "\","
                 + "\"path\":\"" + escapar(request.getRequestURI()) + "\","
+                + "\"requestId\":\"" + escapar(MDC.get("requestId")) + "\","
                 + "\"validationErrors\":null"
                 + "}";
 

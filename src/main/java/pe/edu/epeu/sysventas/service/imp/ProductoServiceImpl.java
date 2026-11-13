@@ -1,10 +1,12 @@
 package pe.edu.epeu.sysventas.service.imp;
 
+import java.math.BigDecimal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pe.edu.epeu.sysventas.dto.ProductoRequestDTO;
 import pe.edu.epeu.sysventas.dto.ProductoResponseDTO;
 import pe.edu.epeu.sysventas.dto.PaginaResponseDTO;
+import pe.edu.epeu.sysventas.auditoria.EventoAuditoria;
 import pe.edu.epeu.sysventas.entity.Categoria;
 import pe.edu.epeu.sysventas.entity.Producto;
 import pe.edu.epeu.sysventas.exception.RecursosNoEncontradosException;
@@ -27,10 +30,13 @@ public class ProductoServiceImpl implements ProductoService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ApplicationEventPublisher eventos;
 
-    public ProductoServiceImpl(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
+    public ProductoServiceImpl(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
+                               ApplicationEventPublisher eventos) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.eventos = eventos;
     }
 
     @Override
@@ -72,6 +78,7 @@ public class ProductoServiceImpl implements ProductoService {
                         "Categoría no encontrada con id: " + t.getCategoriaId()
                 ));
         validarCategoriaActiva(categoria);
+        BigDecimal precioAnterior = producto.getPrecio();
         String nombre = t.getNombre().trim();
         if (productoRepository.existsByNombreIgnoreCaseAndIdNot(nombre, aLong)) {
             throw new ReglaNegocioException("Ya existe un producto con el nombre " + nombre);
@@ -85,6 +92,10 @@ public class ProductoServiceImpl implements ProductoService {
             producto.setStock(t.getStock());
             producto.setCategoria(categoria);
             Producto prodActualizada = productoRepository.save(producto);
+            if (precioAnterior.compareTo(prodActualizada.getPrecio()) != 0) {
+                eventos.publishEvent(EventoAuditoria.de("PRECIO_MODIFICADO", "Producto",
+                        prodActualizada.getId(), precioAnterior + " -> " + prodActualizada.getPrecio()));
+            }
             return convertirResponse(prodActualizada);
 
     }
@@ -115,6 +126,8 @@ public class ProductoServiceImpl implements ProductoService {
         }
         producto.setEstado(false);
         productoRepository.save(producto);
+        eventos.publishEvent(EventoAuditoria.de("PRODUCTO_ELIMINADO", "Producto",
+                producto.getId(), producto.getNombre()));
     }
 
     @Override
@@ -131,6 +144,9 @@ public class ProductoServiceImpl implements ProductoService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "productos", key = "#p0 + '-' + #p1 + '-' + #p2 + '-' + #p3")
     public PaginaResponseDTO<ProductoResponseDTO> listar(int pagina, int tamanio, String ordenarPor, String direccion) {
+        if (tamanio > 100) {
+            throw new ReglaNegocioException("El tamaño máximo permitido es 100");
+        }
         if (!CAMPOS_ORDENABLES.contains(ordenarPor)) {
             throw new ReglaNegocioException("Campo de orden no válido. Use id, nombre, precio o stock");
         }
@@ -166,7 +182,9 @@ public class ProductoServiceImpl implements ProductoService {
                 producto.getCategoria().getId(),
                 producto.getCategoria().getNombre(),
                 producto.getFechaCreacion(),
-                producto.getFechaModificacion()
+                producto.getFechaModificacion(),
+                producto.getCreadoPor(),
+                producto.getModificadoPor()
         );
     }
 }

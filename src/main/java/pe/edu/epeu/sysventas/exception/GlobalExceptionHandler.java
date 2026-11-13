@@ -2,6 +2,7 @@ package pe.edu.epeu.sysventas.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -34,6 +35,7 @@ public class GlobalExceptionHandler {
                 "Not Found",
                 ex.getMessage(),
                 request.getRequestURI(),
+                MDC.get("requestId"),
                 null
         );
 
@@ -58,6 +60,7 @@ public class GlobalExceptionHandler {
                 "Conflict",
                 ex.getMessage(),
                 request.getRequestURI(),
+                MDC.get("requestId"),
                 null
         );
 
@@ -94,6 +97,7 @@ public class GlobalExceptionHandler {
                 "Bad Request",
                 "Existen errores de validación",
                 request.getRequestURI(),
+                MDC.get("requestId"),
                 validationErrors
         );
 
@@ -118,6 +122,7 @@ public class GlobalExceptionHandler {
                 "Bad Request",
                 "Existen errores de validación",
                 request.getRequestURI(),
+                MDC.get("requestId"),
                 validationErrors
         );
         return ResponseEntity.badRequest().body(error);
@@ -133,6 +138,7 @@ public class GlobalExceptionHandler {
                 "Unauthorized",
                 "Usuario o contraseña incorrectos",
                 request.getRequestURI(),
+                MDC.get("requestId"),
                 null
         );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
@@ -153,6 +159,7 @@ public class GlobalExceptionHandler {
                 "Forbidden",
                 "No tiene permisos para realizar esta operación",
                 request.getRequestURI(),
+                MDC.get("requestId"),
                 null
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
