@@ -1,26 +1,32 @@
-# Incidencias de integración y estabilización S14
+# Incidencias de integración y estabilización
 
-## Estado al cierre
+## Resumen
 
-Se registraron cuatro incidencias durante la integración y las pruebas. Todas quedaron corregidas y la suite completa pasó tres veces seguidas: 21 de 21 ejecuciones, sin reintentos.
+| Estado | Críticas | Altas | Medias | Bajas |
+|---|---:|---:|---:|---:|
+| Abiertas | 0 | 0 | 0 | 0 |
+| Cerradas | 0 | 1 | 5 | 0 |
 
-| ID | Módulo | Severidad | Descripción y causa | Corrección | Estado y commit |
-|---|---|---|---|---|---|
-| INC-01 | Ventas y datos de prueba | Media | La prueba inicial asumía que existían un cliente “Mamani” y el producto “Paracetamol”; esos datos no estaban presentes en el esquema local. | La prueba consulta un producto disponible de la primera página y crea un cliente temporal único, que desactiva al terminar. | Cerrada. `c9acdae` |
-| INC-02 | Prueba end-to-end de venta | Media | El flujo intentaba confirmar sin abrir antes el resumen de venta. | Playwright pulsa “Revisar venta”, verifica el cuadro de confirmación y luego envía la operación. | Cerrada. `c9acdae` |
-| INC-03 | Paginación de ventas | Alta | El controlador cortaba en memoria una lista de ventas que el servicio había cargado completa; el listado no limitaba el trabajo en Oracle. | La búsqueda usa `Pageable`, consulta paginada y `count(*)`, con validación de rango y lista permitida para ordenar. | Cerrada. `922ca4c` |
-| INC-04 | Manejo de errores de carga | Media | Al responder 401 durante la prueba de vencimiento, `linkedSignal` leía el valor de un `rxResource` fallido y Angular imprimía un error en consola. | El listado solo lee `value()` cuando el recurso tiene un valor; conserva la página anterior durante carga y evita la lectura cuando falla. | Cerrada. `116a171` |
+| Módulo | Incidencias |
+|---|---:|
+| Datos y flujo de ventas / E2E | 2 |
+| Paginación | 1 |
+| SPA y manejo de errores | 1 |
+| Auditoría y permisos | 2 |
 
-## Verificación posterior
+Se consideran cerradas las incidencias de código que tienen una corrección implementada. La actividad manual de demostración (ensayos, video y evidencia en el aula) está pendiente en los documentos de preparación; no se cuenta como incidencia de software.
 
-- `npm run build`: compilación Angular finalizada correctamente.
-- `npx playwright test --repeat-each=3`: 21 pruebas pasadas de 21, en 39,6 segundos.
-- Flujo de venta: alta y selección de cliente temporal, reautenticación tras un 401 durante la confirmación, registro, bitácora con `requestId`, actualización del reporte y stock actualizado al consultar Productos.
-- Seguridad: vendedor recibe 403 al consultar `/api/v1/auditoria`; el endpoint responde para administrador.
-- Tamaño máximo: Productos responde 409 al solicitar `tamanio=500`.
-- Backend: `mvnw -DskipTests package` finalizó con `BUILD SUCCESS`; la aplicación se ejecutó con perfil `dev` y Flyway registró el esquema en versión 5.
+## Registro
 
-## Consideraciones de prueba
+| ID y fecha | Módulo / severidad | Pasos para reproducir | Esperado / obtenido | Causa raíz | Corrección | Commit | Prueba que evita la regresión |
+|---|---|---|---|---|---|---|---|
+| INC-01 · 2026-11-12 | Ventas y datos E2E · media | Ejecutar el E2E en una base de desarrollo que no tenga los nombres fijos que el test asumía. | Esperado: la prueba prepara sus datos. Obtenido: falla al no encontrar el cliente/producto de ejemplo. | La prueba dependía de fixtures no garantizados. | Seleccionar producto activo con stock y crear cliente temporal único por ejecución; desactivarlo al terminar. | `c9acdae` | E2E de venta dinámico en `e2e/flujo-venta.spec.ts`. |
+| INC-02 · 2026-11-12 | Formulario/confirmación de venta · media | Intentar confirmar una venta sin recorrer el botón de revisión. | Esperado: validar y mostrar confirmación. Obtenido: el test buscaba confirmar un diálogo que todavía no estaba abierto. | El script omitía el paso funcional intermedio. | El E2E pulsa “Revisar venta”, comprueba el diálogo y luego confirma. | `c9acdae` | Flujo E2E de venta con confirmación explícita. |
+| INC-03 · 2026-11-13 | Paginación de ventas · alta | Consultar una página de ventas con volumen alto y observar el trabajo del servicio. | Esperado: Oracle limita filas a la página y cuenta resultados. Obtenido: el servidor cargaba toda la lista y la cortaba en memoria. | El controlador/servicio usaba una lista completa antes de mapear página. | `Pageable`, consulta paginada y `count(*)`; validar rango y lista de campos de orden. | `922ca4c` | `e2e/paginacion.spec.ts` verifica página 2, URL y filtros; medición API en el informe. |
+| INC-04 · 2026-11-13 | SPA / expiración de sesión · media | Forzar un 401 durante el envío y dejar que el listado lea `rxResource.value()`. | Esperado: volver al login sin errores secundarios. Obtenido: Angular reportaba lectura de valor de recurso sin éxito. | El estado de recurso fallido no tenía valor disponible. | Leer `value()` solo cuando `hasValue()` y conservar la página anterior durante carga. | `116a171` | Flujo E2E simula 401 durante venta y comprueba `returnUrl`. |
+| INC-05 · 2026-11-15 | SPA / Auditoría · media | Iniciar como admin e ir a `/auditoria`; probar además como vendedor. | Esperado: admin ve tabla y filtros; vendedor no ve el menú ni abre la ruta. Obtenido antes del cambio: la SPA no tenía vista de auditoría aunque el API existía. | La auditoría se había implementado solo en el backend. | Añadir página paginada con filtros URL, `USUARIOS_ADMINISTRAR` en ruta y menú, manteniendo protección backend. | `e0b3a63` (frontend). | E2E-12 valida filtros y evento; E2E-13 verifica menú y acceso denegado. |
+| INC-06 · 2026-11-15 | Backend / eventos auditables · media | Registrar un cliente o eliminar una categoría elegible y buscar su evento en Auditoría. | Esperado: evento de alta/eliminación tras confirmar la transacción. Obtenido antes del cambio: no existían esos dos eventos de negocio. | Solo se publicaban eventos de venta, precio y producto. | Publicar `CLIENTE_REGISTRADO` y `CATEGORIA_ELIMINADA`; el listener persiste con `AFTER_COMMIT`. El detalle de alta no incluye PII. | `b0f6141` (backend). | E2E-12 crea un cliente temporal y comprueba el evento desde la SPA; la colección Postman incluye alta y consulta. |
 
-El script de volumen solo debe ejecutarse en el esquema local de desarrollo. Cada corrida exitosa del flujo E2E deja una venta de prueba y desactiva el cliente temporal para preservar la referencia de la venta. El script de carga rechaza una segunda ejecución si ya existen nombres `Producto de prueba`; no debe ejecutarse de nuevo sobre esta base cargada.
+## Inspección de intermitencias
 
+La configuración de Playwright deja `retries: 0`, ejecuta con un worker y conserva `trace.zip` en fallos. No se registran reintentos como solución. Las tres corridas de 2026-11-15 pasaron completas (ver [resultados de pruebas](resultados-pruebas.md)).
