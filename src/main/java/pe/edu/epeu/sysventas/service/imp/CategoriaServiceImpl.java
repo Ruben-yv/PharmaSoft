@@ -2,10 +2,12 @@ package pe.edu.epeu.sysventas.service.imp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pe.edu.epeu.sysventas.auditoria.EventoAuditoria;
 import pe.edu.epeu.sysventas.dto.CategoriaRequestDTO;
 import pe.edu.epeu.sysventas.dto.CategoriaResponseDTO;
 import pe.edu.epeu.sysventas.entity.Categoria;
@@ -24,10 +26,13 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
     private final ProductoRepository productoRepository;
+    private final ApplicationEventPublisher eventos;
 
-    public CategoriaServiceImpl(CategoriaRepository categoriaRepository, ProductoRepository productoRepository) {
+    public CategoriaServiceImpl(CategoriaRepository categoriaRepository, ProductoRepository productoRepository,
+                                ApplicationEventPublisher eventos) {
         this.categoriaRepository = categoriaRepository;
         this.productoRepository = productoRepository;
+        this.eventos = eventos;
     }
 
     @Override
@@ -92,6 +97,8 @@ public class CategoriaServiceImpl implements CategoriaService {
             throw new ReglaNegocioException("No se puede eliminar una categoría que tiene productos asociados");
         }
         categoriaRepository.delete(categoria);
+        eventos.publishEvent(EventoAuditoria.de("CATEGORIA_ELIMINADA", "Categoria",
+                categoria.getId(), categoria.getNombre()));
     }
 
     @Override
