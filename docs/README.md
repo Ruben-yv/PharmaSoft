@@ -3,6 +3,7 @@
 Este índice reúne la preparación de estabilización y defensa del Proyecto Integrador. Los archivos marcados **pendientes** requieren ejecución manual, grabación o captura; no se presentan como resultados ya realizados.
 
 - [Informe PDF de trabajo](Varillas_LP2_S14_Autonoma_borrador.pdf) — requiere completar las actividades manuales antes de la entrega final.
+- [Informe S14 con evidencias capturadas](Varillas_LP2_S14_Autonoma_con_evidencias.pdf) — incluye siete capturas reales; conserva explícitos los ensayos, Postman, video y entrega que siguen pendientes.
 
 ## Implementación y trazabilidad
 

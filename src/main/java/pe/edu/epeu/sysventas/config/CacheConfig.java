@@ -19,22 +19,26 @@ public class CacheConfig implements CachingConfigurer {
         return new SimpleCacheErrorHandler() {
             @Override
             public void handleCacheGetError(RuntimeException ex, Cache cache, Object key) {
-                log.warn("Cache {} no disponible al leer {} | {}", cache.getName(), key, ex.getMessage());
+                log.warn("Cache {} no disponible al leer (tipo={})",
+                        cache.getName(), ex.getClass().getSimpleName());
             }
 
             @Override
             public void handleCachePutError(RuntimeException ex, Cache cache, Object key, Object value) {
-                log.warn("Cache {} no disponible al guardar {} | {}", cache.getName(), key, ex.getMessage());
+                log.warn("Cache {} no disponible al guardar (tipo={})",
+                        cache.getName(), ex.getClass().getSimpleName());
             }
 
             @Override
             public void handleCacheEvictError(RuntimeException ex, Cache cache, Object key) {
-                log.warn("Cache {} no disponible al invalidar {} | {}", cache.getName(), key, ex.getMessage());
+                log.warn("Cache {} no disponible al invalidar (tipo={})",
+                        cache.getName(), ex.getClass().getSimpleName());
             }
 
             @Override
             public void handleCacheClearError(RuntimeException ex, Cache cache) {
-                log.warn("Cache {} no disponible al limpiar | {}", cache.getName(), ex.getMessage());
+                log.warn("Cache {} no disponible al limpiar (tipo={})",
+                        cache.getName(), ex.getClass().getSimpleName());
             }
         };
     }
