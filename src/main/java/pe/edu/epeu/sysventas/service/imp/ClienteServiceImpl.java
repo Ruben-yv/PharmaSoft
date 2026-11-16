@@ -2,8 +2,10 @@ package pe.edu.epeu.sysventas.service.imp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pe.edu.epeu.sysventas.auditoria.EventoAuditoria;
 import pe.edu.epeu.sysventas.dto.ClienteRequestDTO;
 import pe.edu.epeu.sysventas.dto.ClienteResponseDTO;
 import pe.edu.epeu.sysventas.entity.Cliente;
@@ -22,10 +24,13 @@ public class ClienteServiceImpl
             LoggerFactory.getLogger(ClienteServiceImpl.class);
 
     private final ClienteRepository clienteRepository;
+    private final ApplicationEventPublisher eventos;
 
     public ClienteServiceImpl(
-            ClienteRepository clienteRepository) {
+            ClienteRepository clienteRepository,
+            ApplicationEventPublisher eventos) {
         this.clienteRepository = clienteRepository;
+        this.eventos = eventos;
     }
 
     @Override
@@ -74,6 +79,8 @@ public class ClienteServiceImpl
 
         Cliente guardado =
                 clienteRepository.save(cliente);
+        eventos.publishEvent(EventoAuditoria.de("CLIENTE_REGISTRADO", "Cliente",
+                guardado.getId(), "Cliente registrado"));
 
         log.info(
                 "Cliente registrado correctamente id={}",

@@ -69,7 +69,8 @@ public class AuthServiceImpl implements AuthService {
             autenticacion = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, request.getPassword()));
         } catch (AuthenticationException ex) {
-            registrarEventoLogin("LOGIN_FALLIDO", username);
+            // Un acceso fallido no tiene una identidad autenticada para la bitácora.
+            // El filtro HTTP conserva el requestId y el rechazo queda en el log de seguridad.
             throw ex;
         }
 
